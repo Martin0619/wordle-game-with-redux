@@ -1,0 +1,36 @@
+.letter {
+	width: 35px;
+	height: 35px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&:not(:last-child) {
+		margin-right: 5px;
+	}
+
+	&--green {
+		background-color: #68a354;
+	}
+
+	&--yellow {
+		background-color: #e5cf6d;
+	}
+
+	&--grey {
+		background-color: #a8a5a0;
+	}
+}
+
+.word {
+	display: flex;
+	:not(:last-child) {
+		margin-bottom: 10px;
+	}
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	margin-top: 22px;
+}
