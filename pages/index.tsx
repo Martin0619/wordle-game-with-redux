@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import Form from '../components/form/form'
-import Word from '../components/letter/letter.list'
 import WinLoss from '../components/win-loss/win-loss'
+import WordleTable from '../components/wordle-table/wordle-table'
 import {
 	checkForWinningState,
 	setCurrentGuess,
@@ -26,8 +26,8 @@ export default function IndexPage() {
 
 	useEffect(() => {
 		if (!typeof window) return
-		dispatch(setSecretWord('Habana'))
-		dispatch(setMaxGuessesAllowed(10))
+		dispatch(setSecretWord('apple'))
+		dispatch(setMaxGuessesAllowed(5))
 	}, [])
 
 	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +66,7 @@ export default function IndexPage() {
 				isGameOver={state.isGameOver}
 			/>
 
-			<Word wordMap={state.guessesTable} />
+			<WordleTable />
 
 			<WinLoss hasWon={state.hasWon} isGameOver={state.isGameOver} />
 		</>

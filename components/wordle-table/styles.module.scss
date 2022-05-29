@@ -1,0 +1,19 @@
+.table-cell {
+	border: 1px solid #999;
+	padding: 0.5rem;
+	width: 35px;
+	height: 35px;
+	text-align: center;
+
+	&--green {
+		background-color: #45ab56;
+	}
+
+	&--yellow {
+		background-color: #b2ad4d;
+	}
+
+	&--grey {
+		background-color: #7c7971;
+	}
+}

@@ -6,18 +6,16 @@ interface WordleSliceObj {
 	currentGuess: string
 	hasWon: boolean
 	isGameOver: boolean
-	wordleTable: { [userGuess: string]: number[] }
+	wordleTable: Array<{ letter: string; state: number }[]>
 	totalGuesses: number
 	maxGuessesAllowed: number
 	secretWord: string
 }
 
 const initialState: WordleSliceObj = {
-	// empty out after validating it
 	currentGuess: '',
 	hasWon: false,
 	isGameOver: false,
-	// used internally since 'currentGuess' can be empty
 	// look-up for letters in the secret word.
 	// [letter] <- array of positions where that letter is present in the secret word
 	letterLookup: {},
@@ -26,8 +24,8 @@ const initialState: WordleSliceObj = {
 	positionLookup: {},
 	// look-up for user guess
 	// [guess] <- array of letter's position state (e.g. -1 indicates letter is present but out of position, 0 letter is not present, and 1 present and at its position)
-	wordleTable: {},
-	maxGuessesAllowed: -1,
+	wordleTable: [],
+	maxGuessesAllowed: 5,
 	totalGuesses: 0,
 	secretWord: '',
 }
@@ -70,31 +68,33 @@ const wordleReducer = createSlice({
 			state.totalGuesses++
 			let hasWon = true
 			const currentGuess = state.currentGuess
-			const letterPositionsState = state.wordleTable[currentGuess] ?? []
+			const LetterPositionStateArray = [] as { letter: string; state: number }[]
 
+			// iterate through the letters of the user guess
 			for (let i = 0; i < currentGuess.length; i++) {
+				// save current letter of a guess
 				const letter = currentGuess[i]
-				const DOES_LETTER_EXISTS = state.letterLookup[letter] ? true : false
-				const IS_LETTER_AT_CORRECT_POSITION = state.positionLookup[i] === letter
-
-				if (DOES_LETTER_EXISTS && IS_LETTER_AT_CORRECT_POSITION) {
-					letterPositionsState.push(1)
-				} else if (DOES_LETTER_EXISTS && !IS_LETTER_AT_CORRECT_POSITION) {
-					letterPositionsState.push(-1)
+				const DoesLetterExist = state.letterLookup[letter] ? true : false
+				const IsLetterAtItsCorrectPosition = state.positionLookup[i] === letter
+				// check if the letter exists and it's at its correct position
+				if (DoesLetterExist && IsLetterAtItsCorrectPosition) {
+					LetterPositionStateArray.push({ letter, state: 1 })
+				} else if (DoesLetterExist && !IsLetterAtItsCorrectPosition) {
+					LetterPositionStateArray.push({ letter, state: -1 })
 					hasWon = false
 				} else {
-					letterPositionsState.push(0)
+					LetterPositionStateArray.push({ letter, state: 0 })
 					hasWon = false
 				}
 			}
-			const IS_GAME_OVER = state.totalGuesses === state.maxGuessesAllowed
+
+			state.wordleTable.push(LetterPositionStateArray)
+			const GameOver = state.totalGuesses === state.maxGuessesAllowed
+			// check if the user has guessed or game is over
 			if (hasWon) {
 				state.hasWon = true
 				state.isGameOver = true
-			} else if (IS_GAME_OVER) {
-				state.isGameOver = true
-			}
-			state.wordleTable[currentGuess] = letterPositionsState
+			} else if (GameOver) state.isGameOver = true
 		},
 		// reset the game
 		reset: (state) => {
@@ -102,7 +102,7 @@ const wordleReducer = createSlice({
 			state.hasWon = false
 			state.isGameOver = false
 			state.totalGuesses = 0
-			state.wordleTable = {}
+			state.wordleTable = []
 		},
 	},
 })
